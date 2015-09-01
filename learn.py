@@ -80,4 +80,7 @@ def iterate_learn(attribute,iterate_count,initial_data_count,new_data_count):
 
 if __name__=='__main__':
     initial_labeled_features()
-    iterate_learn('gender',4,1000,100)
+    iterate_learn('gender',50,5000,100)
+    iterate_learn('age',50,1000,100)
+    iterate_learn('location',50,1000,100)
+    iterate_learn('kids',50,1000,100)
