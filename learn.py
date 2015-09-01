@@ -9,7 +9,7 @@ import numpy
 
 def initial_labeled_features():
     os.system('rm -r %s'%labeled_feature_file_dir)
-    os.system('cp -r /home/adoni/iterate_label2trainset/initial_labeled_features %s'%labeled_feature_file_dir)
+    os.system('cp -r %s/initial_labeled_features %s'%(base_dir,labeled_feature_file_dir))
 
 def get_data(attribute,kind):
     data = load_svmlight_file(RAW_DATA_DIR+'iterate_label2trainset/%s_%s.data'%(attribute,kind),n_features=32000)
