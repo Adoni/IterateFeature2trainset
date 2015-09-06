@@ -161,7 +161,7 @@ def get_balance_params(attribute,collections):
     return params
 
 def get_features(feature_file,existent_features={}):
-    start_index=0 if existent_features=={} else max(existent_features.values())
+    start_index=0 if existent_features=={} else max(existent_features.values())+1
     all_features=dict()
     for index,line in enumerate(open(feature_file)):
         all_features[line[:-1].decode('utf8')]=index+start_index
