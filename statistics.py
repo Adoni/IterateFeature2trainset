@@ -31,6 +31,9 @@ def KL_score(P,Q):
         e+=P[i]*log_p-P[i]*log_q
     return e
 
+def abs_score(P):
+    return 1.0*max(P)/sum(P)
+
 def statistics(labels,feature_file_name,threshold):
     collection=Connection().jd.train_users
     label_dimention=max(labels.values())+1
@@ -47,18 +50,25 @@ def statistics(labels,feature_file_name,threshold):
         features=combine_dict(user['mentions'],Counter(user['products']))
         for f in features:
             if f in feature_distribute:
-                feature_distribute[f][label]+=1
+                feature_distribute[f][label]+=1.0
         bar.draw(index)
+
     for f in feature_distribute.keys():
         s=1.0*sum(feature_distribute[f])
         if s==0 or s<threshold:
             feature_distribute.pop(f)
             continue
         for i in xrange(label_dimention):
+            feature_distribute[f][i]/=label_distribute[i]
+
+    for f in feature_distribute.keys():
+        s=1.0*sum(feature_distribute[f])
+        for i in xrange(label_dimention):
             feature_distribute[f][i]/=s
     score=dict()
     for f,v in feature_distribute.items():
-        score[f]=eta_score(v)
+        #score[f]=eta_score(v)
+        score[f]=abs_score(v)
     return score,feature_distribute
 
 def test():
@@ -68,7 +78,7 @@ def test():
     bar=progress_bar(collection.count())
     labels=dict()
     for index,user in enumerate(collection.find()):
-        label=label_arbiter.arbitrate_label(user['mentions'])
+        label,confidence=label_arbiter.arbitrate_label(user['mentions'])
         if label==-1:
             continue
         labels[user['_id']]=label

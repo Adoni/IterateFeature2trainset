@@ -18,11 +18,11 @@ class LabelArbiter:
 
     def get_label_distribute(self,features):
         label_distribute=numpy.array([1.,1.])
-        for f in features:
+        for f,v in features.items():
             if f in self.labeled_features:
-                label_distribute*=self.labeled_features[f]
-        s=sum(label_distribute)
-        if s==0:
+                label_distribute*=self.labeled_features[f]*v
+        s=1.0*sum(label_distribute)
+        if s==0.0:
             return numpy.array([0.5,0.5])
         label_distribute/=s
         return label_distribute

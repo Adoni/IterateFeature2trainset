@@ -25,23 +25,23 @@ def construct_train_set(attribute,training_count):
     bar=progress_bar(collection.count())
     guess=[]
     for index,user in enumerate(collection.find()):
-        features=combine_dict(user['mentions'],Counter(user['products']))
+        features=combine_dict(user['mentions_0'],Counter('products'))
         label,confidence=label_arbiter.arbitrate_label(features)
         x=[]
 
-        try:
-            for f,v in Counter(user['products']).items():
-                if f not in product_features:
-                    continue
-                x.append((product_features[f],v))
-        except:
-            print user['products']
+        user['products']=[]
+        for f,v in Counter(user['products']).items():
+            if f not in product_features:
+                continue
+            x.append((product_features[f],v))
 
-        for f,v in user['mentions'].items():
+        #user['mentions']={}
+        for f,v in user['mentions_0'].items():
             if f not in mention_features:
                 continue
             x.append((mention_features[f],v))
 
+        user['review']=[]
         for f,v in Counter(user['review']).items():
             if f not in review_featuers:
                 continue
@@ -114,16 +114,19 @@ def construct_test_set(attribute):
         '============'
         x=[]
 
+        user['products']=[]
         for f,v in Counter(user['products']).items():
             if f not in product_features:
                 continue
             x.append((product_features[f],v))
 
+        #user['mentions']={}
         for f,v in user['mentions'].items():
             if f not in mention_features:
                 continue
             x.append((mention_features[f],v))
 
+        user['review']=[]
         for f,v in Counter(user['review']).items():
             if f not in review_featuers:
                 continue

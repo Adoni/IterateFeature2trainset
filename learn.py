@@ -31,7 +31,7 @@ def learn(attribute):
 
     clf = MultinomialNB()
     clf.fit(train_x, train_y)
-    result=dict(zip(train_uids,clf.predict_proba(train_x)))
+    result=dict(zip(unlabel_train_uids,clf.predict_proba(unlabel_train_x)))
     score=clf.score(test_x,test_y)
     print clf.score(train_x,train_y)
     print '------'
@@ -67,7 +67,8 @@ def iterate_learn(attribute,iterate_count,initial_data_count,new_data_count):
     print 'Attribute: %s'%attribute
     fout=open(base_dir+'/iterate_result_%s.result'%attribute,'w')
     for i in xrange(iterate_count):
-        construct(attribute,initial_data_count+i*new_data_count)
+        training_count=initial_data_count+i*new_data_count
+        construct(attribute,training_count)
         print ''
         print '============'
         print 'Iterate: %d'%i
@@ -75,12 +76,13 @@ def iterate_learn(attribute,iterate_count,initial_data_count,new_data_count):
         accurate,result=learn(attribute)
         fout.write('%d %f\n'%(i,accurate))
         labels=get_labels(result)
-        score,feature_distribute=statistics(labels=labels,feature_file_name=base_dir+'/features/product.feature',threshold=30)
-        update_labeled_feature(attribute,score,feature_distribute,max_count=1)
+        #score,feature_distribute=statistics(labels=labels,feature_file_name=base_dir+'/features/all_features.feature',threshold=new_data_count)
+        score,feature_distribute=statistics(labels=labels,feature_file_name=base_dir+'/features/all_features.feature',threshold=10)
+        update_labeled_feature(attribute,score,feature_distribute,max_count=2)
 
 if __name__=='__main__':
     initial_labeled_features()
-    iterate_learn('age',50,1000,100)
-    iterate_learn('gender',50,1000,100)
-    iterate_learn('location',50,1000,100)
-    iterate_learn('kids',50,1000,100)
+    iterate_learn('kids',40,1000,200)
+    iterate_learn('gender',40,1000,200)
+    iterate_learn('age',40,1000,200)
+    iterate_learn('location',40,1000,200)
