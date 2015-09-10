@@ -73,7 +73,7 @@ def statistics(labels,feature_file_name,threshold):
 
 def test():
     from pymongo import Connection
-    label_arbiter=LabelArbiter(labeled_feature_file='./labeled_features/review_constraint_gender.constraints')
+    label_arbiter=LabelArbiter(labeled_feature_file='./labeled_features/review_constraint_location.constraints')
     collection=Connection().jd.train_users
     bar=progress_bar(collection.count())
     labels=dict()
@@ -83,7 +83,7 @@ def test():
             continue
         labels[user['_id']]=label
         bar.draw(index+1)
-        if index>10000:
+        if index>100000:
             break
     score,feature_distribute=statistics(labels,feature_file_name=base_dir+'/features/mention.feature',threshold=50)
     for f,v in sorted(score.items(),key=lambda d:d[1],reverse=True)[:50]:

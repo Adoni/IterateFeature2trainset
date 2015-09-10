@@ -35,7 +35,7 @@ def construct_train_set(attribute,training_count):
                 continue
             x.append((product_features[f],v))
 
-        #user['mentions']={}
+        user['mentions']={}
         for f,v in user['mentions_0'].items():
             if f not in mention_features:
                 continue
@@ -47,7 +47,7 @@ def construct_train_set(attribute,training_count):
                 continue
             x.append((review_featuers[f],v))
 
-        user['mentions_1_1']={}
+        #user['mentions_1_1']={}
         for f,v in user['mentions_1_1'].items():
             f=f+'_1'
             if f not in mention_features_1:
@@ -120,7 +120,7 @@ def construct_test_set(attribute):
                 continue
             x.append((product_features[f],v))
 
-        #user['mentions']={}
+        user['mentions']={}
         for f,v in user['mentions'].items():
             if f not in mention_features:
                 continue
@@ -132,7 +132,7 @@ def construct_test_set(attribute):
                 continue
             x.append((review_featuers[f],v))
 
-        user['mentions_1_1']={}
+        #user['mentions_1_1']={}
         for f,v in user['mentions_1_1'].items():
             f=f+'_1'
             if f not in mention_features_1:

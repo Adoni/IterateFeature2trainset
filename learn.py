@@ -11,6 +11,24 @@ def initial_labeled_features():
     os.system('rm -r %s'%labeled_feature_file_dir)
     os.system('cp -r %s/initial_labeled_features %s'%(base_dir,labeled_feature_file_dir))
 
+def random_initialize_labeled_feature(count=2):
+    import random
+    os.system('rm -r %s'%labeled_feature_file_dir)
+    os.system('cp -r %s/initial_labeled_features %s'%(base_dir,labeled_feature_file_dir))
+    for attribute in ['gender','age','location','kids']:
+        print attribute
+        f=open('%s/review_constraint_%s.constraints'%(labeled_feature_file_dir,attribute))
+        con0=[]
+        con1=[]
+        for line in f:
+            if float(line.split(' ')[1].split(':')[1])>0.5:
+                con0.append(line)
+            else:
+                con1.append(line)
+        for i in xrange(count/2):
+            print(con0[random.randint(0,len(con0)-1)])
+            print(con1[random.randint(0,len(con1)-1)])
+
 def get_data(attribute,kind):
     data = load_svmlight_file(RAW_DATA_DIR+'iterate_label2trainset/%s_%s.data'%(attribute,kind),n_features=32000)
     uids=[line[:-1] for line in open(RAW_DATA_DIR+'iterate_label2trainset/%s_%s_uids.data'%(attribute,kind))]
@@ -66,6 +84,8 @@ def iterate_learn(attribute,iterate_count,initial_data_count,new_data_count):
     from data_constructor import construct
     print 'Attribute: %s'%attribute
     fout=open(base_dir+'/iterate_result_%s.result'%attribute,'w')
+    fbest=open(base_dir+'/best_accurate_%s.result'%attribute,'a')
+    best_accurate=0.0
     for i in xrange(iterate_count):
         training_count=initial_data_count+i*new_data_count
         construct(attribute,training_count)
@@ -74,15 +94,20 @@ def iterate_learn(attribute,iterate_count,initial_data_count,new_data_count):
         print 'Iterate: %d'%i
         print '============'
         accurate,result=learn(attribute)
+        best_accurate=max(best_accurate,accurate)
         fout.write('%d %f\n'%(i,accurate))
         labels=get_labels(result)
         #score,feature_distribute=statistics(labels=labels,feature_file_name=base_dir+'/features/all_features.feature',threshold=new_data_count)
         score,feature_distribute=statistics(labels=labels,feature_file_name=base_dir+'/features/all_features.feature',threshold=10)
         update_labeled_feature(attribute,score,feature_distribute,max_count=2)
+    fbest.write('%f\n'%best_accurate)
 
 if __name__=='__main__':
-    initial_labeled_features()
-    iterate_learn('kids',40,1000,200)
-    iterate_learn('gender',40,1000,200)
-    iterate_learn('age',40,1000,200)
-    iterate_learn('location',40,1000,200)
+    #initial_labeled_features()
+    for i in xrange(10):
+        random_initialize_labeled_feature()
+        iterate_learn('kids',5,1000,400)
+        iterate_learn('gender',5,5000,400)
+        iterate_learn('age',5,4000,400)
+        iterate_learn('location',5,2000,400)
+    print 'Done'
