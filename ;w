@@ -29,7 +29,6 @@ def construct_train_set(attribute,training_count):
     for index,user in enumerate(collection.find()):
         if user['_id'] in test_uids:
             continue
-        #features=combine_dict(user['mentions_0'],Counter(user['products']))
         features=combine_dict(user['mentions_0'],Counter('products'))
         label,confidence=label_arbiter.arbitrate_label(features)
         x=[]
@@ -113,8 +112,8 @@ def construct_test_set(attribute):
             label=user['profile'][attribute].index(1)
         except Exception as e:
             continue
-        #if random.random()>balance_params[label]:
-        #    continue
+        if random.random()>balance_params[label]:
+            continue
 
         '============'
         x=[]
@@ -156,5 +155,4 @@ def construct(attribute,training_count):
     construct_test_set(attribute)
 
 if __name__=='__main__':
-    construct('age',10000)
-    construct('location',10000)
+    construct_test_set('gender')

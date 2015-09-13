@@ -34,8 +34,8 @@ def KL_score(P,Q):
 def abs_score(P):
     return 1.0*max(P)/sum(P)
 
-def statistics(labels,feature_file_name,threshold):
-    collection=Connection().jd.train_users
+def statistics(labels,feature_file_name,threshold,collection=Connection().jd.train_users):
+    #collection=Connection().jd.train_users
     label_dimention=max(labels.values())+1
     label_distribute=Counter(labels.values())
     label_distribute=[label_distribute[i] if i in label_distribute else 0 for i in xrange(label_dimention)]
@@ -71,24 +71,25 @@ def statistics(labels,feature_file_name,threshold):
         score[f]=abs_score(v)
     return score,feature_distribute
 
-def test():
+def test(attribute):
     from pymongo import Connection
-    label_arbiter=LabelArbiter(labeled_feature_file='./labeled_features/review_constraint_location.constraints')
-    collection=Connection().jd.train_users
+    collection=Connection().jd.test_users
     bar=progress_bar(collection.count())
     labels=dict()
     for index,user in enumerate(collection.find()):
-        label,confidence=label_arbiter.arbitrate_label(user['mentions'])
-        if label==-1:
+        try:
+            label=user['profile'][attribute].index(1)
+        except:
             continue
         labels[user['_id']]=label
         bar.draw(index+1)
         if index>100000:
             break
-    score,feature_distribute=statistics(labels,feature_file_name=base_dir+'/features/mention.feature',threshold=50)
+    score,feature_distribute=statistics(labels,feature_file_name=base_dir+'/features/mention.feature',threshold=20)
     for f,v in sorted(score.items(),key=lambda d:d[1],reverse=True)[:50]:
-        print f,v,feature_distribute[f]
+        print f,'0:%0.2f 1:%0.2f'%tuple(feature_distribute[f])
+    print feature_distribute[u'同学']
 
 if __name__=='__main__':
-    test()
+    test('kids')
     print 'Done'
