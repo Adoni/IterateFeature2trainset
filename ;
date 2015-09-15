@@ -27,8 +27,8 @@ def random_initialize_labeled_feature(count=2):
                 con1.append(line)
         f=open('%s/review_constraint_%s.constraints'%(labeled_feature_file_dir,attribute),'w')
         for i in xrange(count/2):
-            f.write(con0[i])
-            f.write(con1[i])
+            f.write(con0[random.randint(0,len(con0)-1)])
+            f.write(con1[random.randint(0,len(con1)-1)])
 
 def linear_initialize_labeled_feature(count=2):
     import random
@@ -45,10 +45,9 @@ def linear_initialize_labeled_feature(count=2):
             else:
                 con1.append(line)
         f=open('%s/review_constraint_%s.constraints'%(labeled_feature_file_dir,attribute),'w')
-        for i in xrange(min(len(con0),count/2)):
-            f.write(con0[random.randint(0,len(con0)-1)])
-        for i in xrange(min(len(con1),count/2)):
-            f.write(con1[random.randint(0,len(con1)-1)])
+        for i in xrange(count/2):
+            f.write(con0[i])
+            f.write(con1[i])
 
 def get_data(attribute,kind):
     data = load_svmlight_file(RAW_DATA_DIR+'iterate_label2trainset/%s_%s.data'%(attribute,kind),n_features=32000)
@@ -138,11 +137,11 @@ if __name__=='__main__':
         print i
         #initial_labeled_features()
         #random_initialize_labeled_feature(count=4)
-        linear_initialize_labeled_feature(count=6)
+        linear_initialize_labeled_feature(count=4)
         count=200
         iterate_count=1
-        iterate_learn('gender',iterate_count,20000,count)
-        iterate_learn('age',iterate_count,10000,count)
-        iterate_learn('location',iterate_count,10000,count)
+        #iterate_learn('gender',iterate_count,20000,count)
+        #iterate_learn('age',iterate_count,10000,count)
+        #iterate_learn('location',iterate_count,10000,count)
         iterate_learn('kids',iterate_count,10000,count)
     print 'Done'
