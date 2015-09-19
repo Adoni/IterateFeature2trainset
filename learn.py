@@ -51,7 +51,7 @@ def linear_initialize_labeled_feature(count=2):
             f.write(con1[random.randint(0,len(con1)-1)])
 
 def get_data(attribute,kind):
-    data = load_svmlight_file(RAW_DATA_DIR+'iterate_label2trainset/%s_%s.data'%(attribute,kind),n_features=32000)
+    data = load_svmlight_file(RAW_DATA_DIR+'iterate_label2trainset/%s_%s.data'%(attribute,kind),n_features=34000)
     uids=[line[:-1] for line in open(RAW_DATA_DIR+'iterate_label2trainset/%s_%s_uids.data'%(attribute,kind))]
     return data[0].toarray(), data[1], uids
 
@@ -141,8 +141,8 @@ if __name__=='__main__':
         linear_initialize_labeled_feature(count=6)
         count=200
         iterate_count=1
-        iterate_learn('gender',iterate_count,20000,count)
+        iterate_learn('gender',iterate_count,10000,count)
         iterate_learn('age',iterate_count,10000,count)
         iterate_learn('location',iterate_count,10000,count)
-        iterate_learn('kids',iterate_count,10000,count)
+        iterate_learn('kids',iterate_count,5000,count)
     print 'Done'

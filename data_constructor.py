@@ -19,6 +19,7 @@ def construct_train_set(attribute,training_count):
     mention_features=get_features(feature_file=base_dir+'/features/mention.feature',existent_features=product_features)
     review_featuers=get_features(feature_file=base_dir+'/features/review.feature',existent_features=mention_features)
     mention_features_1=get_features(feature_file=base_dir+'/features/mention_1.feature',existent_features=review_featuers)
+    mention_features_2=get_features(feature_file=base_dir+'/features/mention_2.feature',existent_features=mention_features_1)
     test_uids=get_test_uids()
 
     labeled_feature_file='%s/review_constraint_%s.constraints'%(labeled_feature_file_dir,attribute)
@@ -52,15 +53,18 @@ def construct_train_set(attribute,training_count):
                 continue
             x.append((review_featuers[f],v))
 
-        #user['mentions_1']={}
+        user['mentions_1']={}
         for f,v in user['mentions_1'].items():
             f=f+'_1'
-            f0=f
             if f not in mention_features_1:
                 continue
-            if f0 in user['mentions_0']:
-                v-=user['mentions_0'][f0]
             x.append((mention_features_1[f],v))
+
+        user['mentions_2']={}
+        for f,v in user['mentions_2'].items():
+            if f not in mention_features_2:
+                continue
+            x.append((mention_features_2[f],v))
 
         x=sorted(x,key=lambda d:d[0])
         str_x=' '.join(map(lambda f:'%s:%f'%f,x))
@@ -104,6 +108,7 @@ def construct_test_set(attribute):
     mention_features=get_features(feature_file=base_dir+'/features/mention.feature',existent_features=product_features)
     review_featuers=get_features(feature_file=base_dir+'/features/review.feature',existent_features=mention_features)
     mention_features_1=get_features(feature_file=base_dir+'/features/mention_1.feature',existent_features=review_featuers)
+    mention_features_2=get_features(feature_file=base_dir+'/features/mention_2.feature',existent_features=mention_features_1)
 
     collection=Connection().jd.test_users
     balance_params=get_balance_params(attribute,collection)
@@ -140,15 +145,18 @@ def construct_test_set(attribute):
                 continue
             x.append((review_featuers[f],v))
 
-        #user['mentions_1']={}
+        user['mentions_1']={}
         for f,v in user['mentions_1'].items():
             f=f+'_1'
-            f0=f
             if f not in mention_features_1:
                 continue
-            if f0 in user['mentions_0']:
-                v-=user['mentions_0'][f0]
             x.append((mention_features_1[f],v))
+
+        user['mentions_2']={}
+        for f,v in user['mentions_2'].items():
+            if f not in mention_features_2:
+                continue
+            x.append((mention_features_2[f],v))
 
         x=sorted(x,key=lambda d:d[0])
         str_x=' '.join(map(lambda f:'%s:%f'%f,x))
